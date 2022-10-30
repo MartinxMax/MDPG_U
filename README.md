@@ -1,8 +1,9 @@
-# Automated DHCP flooding attacks
+# Automated DHCP flooding attacks V2.2
 * resource exhaustion
 * Windows or Linux
 * Wifi Hacker
 * Python 3.6 or above
+* Fixed flash back error
 ## course
 
 * Install Module Library

