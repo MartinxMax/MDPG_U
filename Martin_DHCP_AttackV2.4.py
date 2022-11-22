@@ -25,6 +25,26 @@ class Win_Main:
         self.ui.Delay.setText("1000")
         self.ui.Lock.setText(self.NetWork_INFO[0][0])
 
+    def Detect_dhcp(self,pkt):
+        if DHCP in pkt:
+            return True
+        else:
+            return False
+
+    def Check_DHCP_Server(self):
+
+        xid_random = random.randint(1, 90000000)
+        mac_random = str(RandMAC())
+        clien_mac_id = binascii.unhexlify(mac_random.replace(":", ''))
+        # self.ui.Attack_View.append(f"{mac_random} From {self.iterface_Lock} Attacking...")
+        dhcp_discover = Ether(src=mac_random, dst="FF:FF:FF:FF:FF:FF") / IP(src="0.0.0.0", dst="255.255.255.255") / \
+                        UDP(sport=68, dport=67) / BOOTP(chaddr=clien_mac_id, xid=xid_random) / DHCP(
+            options=[("message-type", "discover"), "end"])
+        sendp(dhcp_discover, iface=str(self.iterface_Lock))
+        if sniff(filter="src port 67", iface=str(self.iterface_Lock), prn=self.Detect_dhcp, timeout=2):
+            return True
+        else:
+            return False
 
     def Clear_winow_Attack(self):
         self.ui.Attack_View.clear()
@@ -44,17 +64,23 @@ class Win_Main:
                     DATA.append((k,item[1]))
         return DATA
     def Check_Data(self,MODE):
+
+
         if self.LOCK == False:
             self.iterface_Lock = str(self.ui.Lock.text())
             self.Attack_Number = str(self.ui.Attack_number.text())
             self.Attack_Time = str(self.ui.Delay.text())
 
             if self.Attack_Number.isdigit() and int(self.Attack_Number)<= 255 and len(self.iterface_Lock) < 20 and self.iterface_Lock and self.Attack_Time.isdigit() and int(self.Attack_Time) <=10000:
-                self.LOCK = True
-                self.Attack_Number=int(self.Attack_Number)
-                self.Attack_Time=int(self.Attack_Time)/1000
-                #print(self.iterface_Lock,self.Attack_Number)
-                _thread.start_new_thread(self.Attack, (MODE,))
+                if self.Check_DHCP_Server() == False:
+                    self.Error("!!!DHCP Server is Not detected,please try to replace the Network card or network!!!")
+                    return False
+                else:
+                    self.LOCK = True
+                    self.Attack_Number=int(self.Attack_Number)
+                    self.Attack_Time=int(self.Attack_Time)/1000
+                    #print(self.iterface_Lock,self.Attack_Number)
+                    _thread.start_new_thread(self.Attack, (MODE,))
             else:
                 self.Error("!!!Find a Error!!!")
                 self.iterface_Lock=None

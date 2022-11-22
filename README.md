@@ -3,7 +3,7 @@
 * Windows or Linux
 * Wifi Hacker
 * Python 3.6 or above
-* Fixed flash back error
+***  Add error message ***
 ## course
 
 * Install Module Library

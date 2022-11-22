@@ -26,11 +26,11 @@
    <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
-   <string>Martin_DHCP_Attack_Tools v2.2</string>
+   <string>Martin_DHCP_Attack_Tools v2.4</string>
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>./Hack.ico</normaloff>../Hack.ico</iconset>
+    <normaloff>Hack.ico</normaloff>Hack.ico</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
